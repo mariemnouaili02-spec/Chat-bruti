@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Brouti AI - Le Chatbot Hilarant 🤪</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .container {
+      width: 100%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      height: 90vh;
+      max-height: 800px;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 20px 20px 0 0;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+    .header p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    .setup {
+      padding: 15px 20px;
+      background: rgba(102, 126, 234, 0.05);
+      border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .setup.show {
+      max-height: 300px;
+    }
+    .setup label {
+      font-size: 12px;
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+      font-weight: 600;
+    }
+    .setup input, .setup select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+    .conversation {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: #fafafa;
+    }
+    .msg {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+    }
+    .msg.user {
+      justify-content: flex-end;
+    }
+    .msg.bot {
+      justify-content: flex-start;
+    }
+    .msg-content {
+      max-width: 70%;
+      padding: 12px 15px;
+      border-radius: 12px;
+      word-wrap: break-word;
+    }
+    .msg.user .msg-content {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 15px 5px 15px 15px;
+    }
+    .msg.bot .msg-content {
+      background: #e8e8e8;
+      color: #333;
+      border-radius: 5px 15px 15px 15px;
+    }
+    .msg-emoji {
+      font-size: 24px;
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .welcome-screen {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+    }
+    .welcome-screen h2 {
+      color: #333;
+      margin: 20px 0 10px;
+    }
+    .feature-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 30px;
+    }
+    .feature-card {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .feature-emoji {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    .feature-card h3 {
+      color: #333;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 12px;
+      color: #999;
+    }
+    .loading {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+    }
+    .loading-dot {
+      width: 8px;
+      height: 8px;
+      background: #667eea;
+      border-radius: 50%;
+      animation: bounce 1.4s infinite;
+    }
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    @media (max-width: 600px) {
+      .feature-cards { grid-template-columns: 1fr; }
+    }
+    .chat-form {
+      display: flex;
+      gap: 10px;
+      padding: 15px 20px;
+      background: white;
+      border-top: 1px solid #ddd;
+    }
+    .chat-form input {
+      flex: 1;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .chat-form button {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+    .chat-form button:hover {
+      transform: scale(1.05);
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 0 20px 10px;
+    }
+    .controls button {
+      padding: 8px 12px;
+      font-size: 11px;
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .controls button:hover {
+      background: #e0e0e0;
+    }
+    .controls button.settings-toggle {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+    }
+    .controls button.settings-toggle:hover {
+      transform: scale(1.05);
+    }
+    .status {
+      padding: 10px 20px;
+      font-size: 12px;
+      color: #666;
+      background: rgba(102, 126, 234, 0.05);
+      border-top: 1px solid rgba(102, 126, 234, 0.1);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🤪 Brouti AI 🤪</h1>
+      <p>Le chatbot hilarant qui parle n'importe quoi avec style</p>
+    </div>
+
+    <div class="setup" id="settings-panel">
+      <div>
+        <label>Nom du bot 🎭</label>
+        <input id="bot-name" placeholder="Ex: Brouti" value="Brouti" />
+      </div>
+      <div>
+        <label>Style 🎨</label>
+        <select id="bot-style">
+          <option value="silly">Silly & Random</option>
+          <option value="conflicted">Contradictory</option>
+          <option value="memey">Meme Lord</option>
+          <option value="mix">All Mix</option>
+        </select>
+      </div>
+      <div>
+        <label><input id="use-llm" type="checkbox"> Utiliser LLM</label>
+      </div>
+      <div>
+        <input id="llm-key" type="password" placeholder="Clé OpenAI (sk-...)" />
+      </div>
+      <div style="grid-column: 1/-1;">
+        <label>Modèle LLM</label>
+        <select id="llm-model">
+          <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+          <option value="gpt-4o-mini">GPT-4o Mini</option>
+          <option value="gpt-4">GPT-4</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="toggle-settings" class="settings-toggle">⚙️ Settings</button>
+      <button id="randomize">🎲 Randomize</button>
+      <button id="clear">🗑️ Clear</button>
+      <button id="export">💾 Export</button>
+    </div>
+
+    <div class="conversation" id="conversation"></div>
+
+    <form class="chat-form" id="chat-form">
+      <input id="user-input" autocomplete="off" placeholder="Dites quelque chose... ou pas 😏" />
+      <button type="submit">Envoyer</button>
+    </form>
+
+    <div class="status" id="status">Prêt à dire n'importe quoi! 🚀</div>
+  </div>
+
+  <script src="fun-chatbot.js"></script>
+</body>
+</html>
