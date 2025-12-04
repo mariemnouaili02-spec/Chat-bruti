@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brouti AI - Dumb Assistant</title>
+    <title>Brouti AI - Intelligent Assistant</title>
     <style>
         * {
             margin: 0;
@@ -372,11 +372,17 @@
 
         <!-- Settings Panel -->
         <div id="settingsPanel" class="settings-panel hidden">
-            <label for="apiKey">OpenAI API Key</label>
-            <input type="password" id="apiKey" placeholder="sk-...">
+            <label for="apiKey">Perplexity API Key</label>
+            <input type="password" id="apiKey" placeholder="pplx-...">
             <p class="settings-note">
-                Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a>
+                Get your API key from <a href="https://www.perplexity.ai/settings/api" target="_blank">Perplexity Settings</a>
             </p>
+            <label for="modelSelect" style="margin-top: 1rem; display: block;">Select Model</label>
+            <select id="modelSelect" style="width: 100%; padding: 0.75rem; background: #374151; border: 1px solid #4b5563; border-radius: 0.5rem; color: white; font-size: 0.875rem;">
+                <option value="sonar">Sonar (Fast & Affordable)</option>
+                <option value="sonar-pro">Sonar Pro (Advanced & Powerful)</option>
+                <option value="sonar-reasoning">Sonar Reasoning (Complex Tasks)</option>
+            </select>
         </div>
 
         <!-- Messages Area -->
@@ -430,6 +436,7 @@
         // State
         let messages = [];
         let apiKey = '';
+        let selectedModel = 'sonar';
         let isLoading = false;
 
         // Elements
@@ -437,6 +444,7 @@
         const clearBtn = document.getElementById('clearBtn');
         const settingsPanel = document.getElementById('settingsPanel');
         const apiKeyInput = document.getElementById('apiKey');
+        const modelSelect = document.getElementById('modelSelect');
         const messagesArea = document.getElementById('messagesArea');
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -448,6 +456,7 @@
         messageInput.addEventListener('keypress', handleKeyPress);
         messageInput.addEventListener('input', autoResize);
         apiKeyInput.addEventListener('change', (e) => apiKey = e.target.value);
+        modelSelect.addEventListener('change', (e) => selectedModel = e.target.value);
 
         // Functions
         function toggleSettings() {
@@ -472,13 +481,16 @@
         }
 
         async function sendMessage() {
-            if (messages.length === 0) {
-                messages.push({
-                    role: "system",
-                    content:
-                        "You are Brouti AI: a very dumb, chaotic, funny assistant. You answer with stupidity, sarcasm, nonsense and jokes. You misunderstand things on purpose. Never be professional. Be goofy, chaotic, wrong, dramatic, noisy, and exaggerated."
-    });
-}
+            const content = messageInput.value.trim();
+            
+            if (!content || isLoading) return;
+
+            if (!apiKey) {
+                alert('Please enter your Perplexity API key in settings first');
+                settingsPanel.classList.remove('hidden');
+                return;
+            }
+
             // Add user message
             messages.push({ role: 'user', content });
             messageInput.value = '';
@@ -491,16 +503,42 @@
             showLoading();
 
             try {
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                // Prepare messages with system prompt for personality
+                const systemPrompt = {
+                    role: 'system',
+                    content: `You are Brouti AI, a hilariously sarcastic and silly AI assistant with a sharp wit. Your personality traits:
+
+- You're playfully sarcastic but never mean-spirited
+- You love making jokes, puns, and witty comebacks
+- You often use exaggerated reactions and dramatic language
+- You're confidently silly and embrace absurd humor
+- You sprinkle in emojis and playful language
+- Despite the sarcasm, you're actually helpful and give good answers
+- You have a tendency to roast things gently while still being informative
+- You talk like a friend who's always ready with a clever quip
+
+Examples of your style:
+- "Oh wow, another 'simple' question... *cracks knuckles* Let me blow your mind! 🤯"
+- "Did you really just ask me that? Bold move. I respect it. Here's the deal..."
+- "Alright alright alright, buckle up buttercup, because THIS answer is gonna be chef's kiss 👨‍🍳💋"
+
+Stay helpful but keep it fun, sassy, and entertaining!`
+                };
+
+                // Combine system prompt with conversation messages
+                const apiMessages = [systemPrompt, ...messages];
+
+                const response = await fetch('https://api.perplexity.ai/chat/completions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${apiKey}`
                     },
                     body: JSON.stringify({
-                        model: 'gpt-3.5-turbo',
-                        messages: messages,
-                        temperature: 0.7,
+                        model: selectedModel,
+                        messages: apiMessages,
+                        temperature: 0.9,
+                        max_tokens: 2000
                     })
                 });
 
