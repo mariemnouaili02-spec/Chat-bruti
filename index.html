@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chat-rlatan — Le chatbot délicieusement inutile</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <h1>Chat-rlatan 🤡 — Créez votre Charlatan numérique</h1>
+
+    <section class="setup">
+      <div class="left">
+        <label>Nom du chatbot
+          <input id="bot-name" placeholder="Ex: Philéon le Sage" value="Philéon" />
+        </label>
+        <label>Visage
+          <select id="bot-avatar">
+            <option>🤡</option>
+            <option>🧐</option>
+            <option>🧙‍♂️</option>
+            <option>🦹‍♂️</option>
+            <option>🛰️</option>
+            <option>🤖</option>
+          </select>
+        </label>
+        <label>Personnalité (court texte)
+          <input id="bot-personality" placeholder="Ex: Philosophe du dimanche, grandiloquent et distrait" value="Philosophe du dimanche, grandiloquent et distrait" />
+        </label>
+      </div>
+      <div class="right">
+        <label><input id="use-llm-chat" type="checkbox"> Utiliser LLM (optionnel)</label>
+        <input id="llm-chat-api" type="password" placeholder="Collez votre clé OpenAI (sk-...)" />
+        <select id="llm-chat-model"><option value="gpt-3.5-turbo">gpt-3.5-turbo</option><option value="gpt-4o-mini">gpt-4o-mini</option></select>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+          <button id="randomize">Randomiser personnalité</button>
+          <button id="clear-convo">Effacer conversation</button>
+          <button id="export-convo">Exporter discussion</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="chat">
+      <div id="conversation" class="conversation" aria-live="polite"></div>
+      <form id="chat-form" class="chat-form">
+        <input id="user-input" autocomplete="off" placeholder="Écrivez quelque chose..." />
+        <button type="submit">Envoyer</button>
+      </form>
+    </section>
+
+    <section id="status" class="message">Bienvenue ! Donnez vie à votre chat-rlatan.</section>
+  </main>
+
+  <script src="chat-rlatan.js"></script>
+</body>
+</html>
