@@ -37,7 +37,7 @@ def create_app():
     def health():
         return jsonify(status="ok")
 
-    @app.route("/api/v1/messages", methods=["GET"])
+    @app.route("/api/v1/conversations/list", methods=["GET"])
     def list_messages():
         msgs = app.config["MESSAGES"]
 
